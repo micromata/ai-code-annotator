@@ -1,95 +1,101 @@
 # AI-Code-Annotator
 
-Das AI-Code-Annotator-Projekt nutzt Azure OpenAI, um automatisiert verschiedene Aufgaben auf lokalen Dateien auszuführen. Dazu zählen unter anderem das Kommentieren von Code, das Hinzufügen von Log-Statements, das Erstellen von Unit-Tests oder das Zusammenfassen von Inhalten. Die Aufgaben sind flexibel konfigurierbar und können an spezifische Anforderungen angepasst werden.
+The AI-Code-Annotator project utilizes Azure OpenAI to automatically execute various tasks on local files. These include commenting on code, adding log statements, creating unit tests, or summarizing content. The tasks are flexibly configurable and can be tailored to specific requirements.
 
 ---
 
-## Funktionsweise
+## Functionality
 
-### Aufgabenverwaltung
-Das System lädt Aufgaben aus einer YAML-Datei, die Systemprompts und Dateioperationen definiert. Jede Aufgabe kann auf bestimmte Dateitypen oder Muster beschränkt werden.
+### Task Management
 
-### Datei-Scanning
-Das Tool durchsucht das angegebene Verzeichnis (`BASE_DIR`) nach Dateien, die den in `TASKS` definierten Kriterien entsprechen. Dateien werden anhand von Mustern, Dateierweiterungen und Größenbeschränkungen (<= 3MB) gefiltert.
+The system loads tasks from a YAML file that defines system prompts and file operations. Each task can be restricted to specific file types or patterns.
 
-### Batch-Verarbeitung
-Das Tool verarbeitet Dateien in konfigurierbaren Batches. Dies reduziert die Belastung von Systemressourcen und ermöglicht eine gleichmäßige Verarbeitung. Die Batch-Größe kann angepasst werden, um die Verarbeitungsgeschwindigkeit zu steuern.
+### File Scanning
 
-### Aufgabenverarbeitung
-Jede Datei wird an das Azure OpenAI-Modell gesendet, das die definierten Aufgaben ausführt. Dazu gehören:
-- Hinzufügen von Kommentaren
-- Ergänzen von Log-Statements
-- Erstellen von Unit-Tests
-- Weitere Aufgaben wie Refactoring oder Datenanreicherung
+The tool scans the specified directory (`BASE_DIR`) for files that match the criteria defined in `TASKS`. Files are filtered based on patterns, file extensions, and size limitations (<= 3MB).
 
-Nach Abschluss wird die Datei im Index als bearbeitet markiert.
+### Batch Processing
 
-### Index-Tracking
-Eine Indexdatei (`INDEX_FILE`) speichert den Bearbeitungsstatus von Dateien. Dadurch werden bereits verarbeitete Dateien bei späteren Durchläufen übersprungen.
+The tool processes files in configurable batches. This reduces the load on system resources and enables consistent processing. The batch size can be adjusted to control processing speed.
+
+### Task Execution
+
+Each file is sent to the Azure OpenAI model, which performs the defined tasks. These include:
+- Adding comments
+- Adding log statements
+- Creating unit tests
+- Additional tasks such as refactoring or data enrichment
+
+Once completed, the file is marked as processed in the index.
+
+### Index Tracking
+
+An index file (`INDEX_FILE`) stores the processing status of files. This ensures that already processed files are skipped in later runs.
 
 ---
 
-## Schnelleinstieg
+## Quick Start
 
-1. **Docker Compose verwenden**  
-   Kopiere die folgende Compose-Datei in dein Projekt und passe sie bei Bedarf an:
+1. **Use Docker Compose**
+
+   Copy the following Compose file into your project and adjust it if necessary:
 
    ```yaml
-   version: "3.9"
-   
-   # This version uses a local build of the image
+   version: "3.9" # This version uses a local build of the image
    services:
-      documentation:
-         build: .
-         container_name: ai-code-annotator
-         volumes:
-            # Pfad zum Projekt, das dokumentiert werden soll
-            - /Users/xxx:/app/project
-            # Spezifisches Mount für die tasks_and_prompts.yaml (nur anzugeben, wenn du spezifische Tasks, Dateifilter oder eigene Aufgaben verwenden willst)
-            # - /Users/XXXX/tasks_and_prompts.yaml:/app/tasks_and_prompts.yaml
-         environment:
-            - BASE_DIR=/app/project
-            # Wähle einen für dich passenden Task aus (siehe tasks_and_prompts.yaml)
-            - TASKS=documentation
-            # Azure OpenAI API Key (siehe Bitwarden AI Collection)
-            - AZURE_OPENAI_API_KEY=xxx
-         restart: "no"
+     documentation:
+       build: .
+       container_name: ai-code-annotator
+       volumes:
+         # Path to the project to be documented
+         - /Users/xxx:/app/project
+         # Specific mount for tasks_and_prompts.yaml (specify only if you want to use specific tasks, file filters, or custom tasks)
+         # - /Users/XXXX/tasks_and_prompts.yaml:/app/tasks_and_prompts.yaml
+       environment:
+         - BASE_DIR=/app/project # Choose a task suitable for you (see tasks_and_prompts.yaml)
+         - TASKS=documentation
+         # Azure OpenAI API Key (see Bitwarden AI Collection)
+         - AZURE_OPENAI_API_KEY=xxx
+       restart: "no"
    ```
 
-   > **Hinweis**: Passe den Pfad `/Users/xxx` an dein lokales Dateisystem an.
+   > **Note**: Adjust the path `/Users/xxx` to your local file system.
 
-2. **Container starten**  
+2. **Start Container**
+
    ```bash
    docker compose up
    ```
-   Der Container verarbeitet die Dateien im angegebenen Verzeichnis.
+
+   The container processes the files in the specified directory.
 
 ---
 
-## Wiederholte Ausführung
+## Repeated Execution
 
-Wenn du das Skript erneut auf dieselben Dateien anwenden willst (z.B. nachdem du Änderungen vorgenommen hast), musst du **die bestehende Index-Datei löschen** (z.B. `/Users/XXX/project_index.json`), damit alle Dateien neu bearbeitet werden.
+If you want to reapply the script to the same files (e.g., after making modifications), you must **delete the existing index file** (e.g., `/Users/XXX/project_index.json`) so all files are reprocessed.
 
 ---
 
-## Lokale Entwicklung
+## Local Development
 
-### Abhängigkeiten installieren
+### Install Dependencies
 
 ```bash
 python3 -m venv venv
-source ./venv/bin/activate 
+source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### `.env`-Datei erstellen
+### Create `.env` File
 
 ```bash
 cp .env.sample .env
 ```
-Passe die Werte in der `.env`-Datei an (z. B. `BASE_DIR` und `AZURE_OPENAI_API_KEY`).
 
-### Skript ausführen
+Adjust the values in the `.env` file (e.g., `BASE_DIR` and `AZURE_OPENAI_API_KEY`).
+
+### Run Script
 
 ```bash
 python3 main.py
@@ -99,38 +105,40 @@ python3 main.py
 
 ## Features
 
-- **Batch-Verarbeitung**: Dateien werden in Batches verarbeitet, um die Systemressourcen effizient zu nutzen.
-- **Flexibles Aufgabenmanagement**: Aufgaben wie Dokumentation, Logging oder Unit-Tests können in einer YAML-Datei definiert werden.
-- **Index-Tracking**: Verhindert doppelte Bearbeitung bereits verarbeiteter Dateien.
-- **Azure OpenAI Integration**: Nutzt KI-Modelle für die Verarbeitung.
-- **Asynchrone Verarbeitung**: Unterstützt parallele Verarbeitung für bessere Performance.
+- **Batch Processing**: Files are processed in batches to efficiently use system resources.
+- **Flexible Task Management**: Tasks like documentation, logging, or unit tests can be defined in a YAML file.
+- **Index Tracking**: Prevents duplicate processing of already-processed files.
+- **Azure OpenAI Integration**: Utilizes AI models for processing.
+- **Asynchronous Processing**: Supports parallel processing for better performance.
 
 ---
 
-## Kerndateien und Module
+## Core Files and Modules
 
-- **`main.py`**: Startet die Verarbeitungspipeline.
-- **`file_utils.py`**: Funktionen zum Einlesen und Filtern von Dateien.
-- **`open_ai_client.py`**: Schnittstelle zur Azure OpenAI API.
-- **`process_files.py`**: Logik für die Verarbeitung von Dateien.
-- **`processing_index.py`**: Verwaltung des Bearbeitungsstatus.
-- **`task_and_prompt_manager.py`**: Laden und Verwalten von Aufgaben und Prompts.
+- **`main.py`**: Initiates the processing pipeline.
+- **`file_utils.py`**: Functions for reading and filtering files.
+- **`open_ai_client.py`**: Interface to the Azure OpenAI API.
+- **`process_files.py`**: Logic for processing files.
+- **`processing_index.py`**: Management of processing status.
+- **`task_and_prompt_manager.py`**: Loading and managing tasks and prompts.
 
 ---
 
 ## Double Checker for AI-Documentation
 
-Dieses Skript prüft Änderungen in einem Git-Repository und erkennt, ob nur Kommentare oder Formatierungen geändert wurden. Falls Code-Änderungen festgestellt werden, können diese zurückgesetzt werden.
+This script verifies changes in a Git repository and detects whether only comments or formatting have been altered. If code changes are identified, they can be reverted.
 
 ```bash
 python3 double-check-documentation-changes.py
 ```
 
-### Funktionsweise
-1. Analysiert geänderte Dateien im Git-Repository.
-2. Prüft, ob Änderungen nur Kommentare oder Formatierungen betreffen.
-3. Erkennt Code-Änderungen und setzt diese bei Bedarf zurück.
+### Functionality
 
-### Konfigurationsoptionen
-- **`DRY_RUN`**: Keine Änderungen vornehmen, nur protokollieren.
-- **`USE_LLM_ANALYSIS`**: Nutzt Azure OpenAI für detaillierte Analysen.
+1. Analyzes changed files in the Git repository.
+2. Checks whether changes only concern comments or formatting.
+3. Detects code changes and reverts them if necessary.
+
+### Configuration Options
+
+- **`DRY_RUN`**: Do not make any changes, only log them.
+- **`USE_LLM_ANALYSIS`**: Uses Azure OpenAI for detailed analysis.
