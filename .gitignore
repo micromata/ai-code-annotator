@@ -1,8 +1,0 @@
-.env
-.conda
-doc_index/*
-.venv/
-venv/
-.idea/
-*.iml
-.ipynb_checkpoints/
