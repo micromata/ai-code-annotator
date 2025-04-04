@@ -1,0 +1,22 @@
+version: "3.9"
+
+# This version uses a local build of the image
+services:
+  documentation:
+    build: .
+    container_name: ai-code-annotator
+    
+    volumes:
+      # Pfad zum Projekt, das dokumentiert werden soll
+      - /Users/xxx:/app/project
+      # Spezifisches Mount für die tasks_and_prompts.yaml (nur anzugeben, wenn du spezifische Tasks, Dateifilter oder eigene Aufgaben verwenden willst)
+      # - /Users/XXXX/tasks_and_prompts.yaml:/app/tasks_and_prompts.yaml
+    environment:
+      - BASE_DIR=/app/project
+      # Wähle einen für dich passenden Task aus (siehe tasks_and_prompts.yaml)
+      - TASKS=documentation
+      # Azure OpenAI API Key (siehe Bitwarden AI Collection)
+      - AZURE_OPENAI_API_KEY=xxx
+
+    restart: "no"
+
