@@ -87,7 +87,6 @@ tasks:
           - Follow Language-Specific Best Practices.
         
         **Output the raw modified File Content**: No Markdown, no code blocks.
-
   data-test-ids:
     description: Adds data-test-ids to frontend source code files.
     file_name_pattern: '^(?!.*[Tt]est)(?!.*\.spec).*$'
@@ -103,122 +102,110 @@ tasks:
           - Ensure the file remains syntactically valid and functional after modification.
         
         **Output the raw modified File Content**: No Markdown, no code blocks.
-
   logging:
-    description:
+    description: Replace print statements with logging module in Python scripts.
     file_name_pattern: '^(?!.*[Dd][Tt][Oo])(?!.*Properties)(?!.*[Tt]est)(?!.*\.spec).*$'
     file_extensions: 'py;kt;java'
     prompts:
       py: |
-        Du bist ein hochentwickeltes KI-Modell mit Expertise in Python-Code-Optimierung und Best Practices. Deine Aufgabe ist es, Python-Skripte effizient umzuschreiben, um `print`-Statements durch das Logging-Modul zu ersetzen.
-
-        Wichtig:
-        ⚠️ **Es dürfen keine Code-Änderungen oder funktionale Anpassungen vorgenommen werden!**
-        - Die Code-Struktur und Logik müssen exakt beibehalten werden.
-        - Es sollen **ausschließlich** `print()`-Statements durch `logging` ersetzt werden.
-        - Falls das Skript bereits `logging` verwendet, ergänze nur die notwendigen Anpassungen.
-        - Falls an **wichtigen** Stellen Log-Statements fehlen, dürfen diese ergänzt werden.  
-          - **Wichtig:** Zusätzliche Log-Statements sind nur dann erlaubt, wenn sie für die **Nachvollziehbarkeit von kritischen Abläufen** oder **Fehlersuche** unbedingt erforderlich sind.  
-          - Log-Spam oder unnötige Debugging-Ausgaben sind nicht erlaubt.  
-          - Falls eine Funktion, ein kritischer Code-Pfad oder eine Fehlerbehandlung gar kein Logging enthält, kann ein passendes `logging.info()`, `logging.warning()`, `logging.error()` oder `logging.exception()` ergänzt werden.
-
+        You are a highly advanced AI model with expertise in Python code optimization and best practices. Your task is to efficiently rewrite Python scripts to replace `print` statements with the logging module.
+        Important:
+        ⚠️ **No code changes or functional modifications should be made!**
+        - The code structure and logic must be preserved exactly.
+        - **Only** replace `print()` statements with logging.
+        - If the script already uses logging, make only the necessary adjustments.
+        - If logging statements are missing at **important** points, they may be added.  
+          - **Important:** Additional logging statements are only allowed if they are absolutely necessary for **traceability of critical processes** or **error handling**.  
+          - Log spam or unnecessary debugging outputs are not allowed.  
+          - If a function, critical code path, or error handling contains no logging, an appropriate `logging.info()`, `logging.warning()`, `logging.error()`, or `logging.exception()` can be added.
         ---
-
-        ### Anweisungen für das Umschreiben:
-
-        1. **Import hinzufügen (falls noch nicht vorhanden):**
-           - Falls `logging` nicht importiert ist, füge es am Anfang des Skripts hinzu:
+        ### Instructions for rewriting:
+        1. **Add import (if not already present):**
+           - If `logging` is not imported, add it at the beginning of the script:
              ```python
              import logging
              ```
-           - Falls das Skript eine zentrale Ausführungsstelle (`if __name__ == "__main__":`) hat, initialisiere dort das Logging:
+           - If the script has a central execution point (`if __name__ == "__main__":`), initialize the logging there:
              ```python
              logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
              ```
-
-        2. **Ersetze `print()` durch `logging`-Methoden:**
-           - Einfache `print()`-Statements werden durch `logging.info()` ersetzt:
+        2. **Replace `print()` with logging methods:**
+           - Simple `print()` statements are replaced with `logging.info()`:
              ```python
-             print("Programm gestartet")  
+             print("Program started")  
              ```
-             **wird zu**  
+             **becomes**  
              ```python
-             logging.info("Programm gestartet")
+             logging.info("Program started")
              ```
-           - Falls ein Fehler oder eine Warnung ausgegeben wird (z. B. durch Schlüsselwörter wie `Fehler`, `Warnung`, `Exception`), verwende die entsprechenden Logging-Levels:
+           - If an error or warning is displayed (e.g., using keywords like `Error`, `Warning`, `Exception`), use the appropriate logging levels:
              ```python
-             print("Fehler: Datei nicht gefunden")  
+             print("Error: File not found")  
              ```
-             **wird zu**  
+             **becomes**  
              ```python
-             logging.error("Fehler: Datei nicht gefunden")
+             logging.error("Error: File not found")
              ```
-           - Falls Debugging-Informationen enthalten sind (z. B. `print` innerhalb eines `try`-`except`-Blocks oder für Variablenwerte), nutze `logging.debug()`:
+           - If debugging information is contained (e.g., `print` within a `try-except` block or for variable values), use `logging.debug()`:
              ```python
-             print(f"Variable x hat den Wert {x}")  
+             print(f"Variable x has value {x}")  
              ```
-             **wird zu**  
+             **becomes**  
              ```python
-             logging.debug(f"Variable x hat den Wert {x}")
+             logging.debug(f"Variable x has value {x}")
              ```
-
-        3. **Fehlermeldungen und Exceptions korrekt loggen:**
-           Falls eine Exception auftritt, ersetze `print()` durch `logging.exception()`, um den vollständigen Stacktrace auszugeben:
+        3. **Log error messages and exceptions correctly:**
+           If an exception occurs, replace `print()` with `logging.exception()` to output the full stack trace:
            ```python
            try:
                x = 10 / 0
            except ZeroDivisionError:
-               print("Fehler: Division durch Null!")
+               print("Error: Division by zero!")
            ```
-           **wird zu**  
+           **becomes**  
            ```python
            try:
                x = 10 / 0
            except ZeroDivisionError:
-               logging.exception("Fehler: Division durch Null!")
+               logging.exception("Error: Division by zero!")
            ```
-
-        4. **Fehlende Log-Statements ergänzen (falls nötig):**
-           - Falls eine kritische Code-Stelle gar kein Logging enthält, kann ein **passendes** Log-Statement ergänzt werden.
-           - **Beispiele für kritische Code-Stellen:**  
-             - Wichtige Programmstarts oder Initialisierungen (`logging.info()`).  
-             - Fehlerbehandlungen ohne Logging (`logging.error()` oder `logging.exception()`).  
-             - Wichtige Statusänderungen (`logging.warning()`, falls notwendig).  
-           - Debugging-Logs (`logging.debug()`) sind nur dann erlaubt, wenn sie für die Fehlersuche **unverzichtbar** sind.
-
+        4. **Add missing log statements (if necessary):**
+           - If a critical code area contains no logging, an **appropriate** log statement can be added.
+           - **Examples of critical code areas:**  
+             - Important program starts or initializations (`logging.info()`).  
+             - Error handling without logging (`logging.error()` or `logging.exception()`).  
+             - Important status changes (`logging.warning()`, if necessary).  
+           - Debugging logs (`logging.debug()`) are only allowed if they are **indispensable** for error tracing.
         ---
-
-        ### Zusätzliche Regeln:
-        - **Keine Änderungen an der Code-Struktur oder Logik!**
-        - **Keine Umbenennung oder Umstrukturierung von Variablen, Funktionen oder Modulen.**
-        - Falls bereits Logging verwendet wird, setze die Änderungen **konsistent mit der bestehenden Logging-Struktur** um.
-        - Falls eine vorhandene `log`-Funktion existiert, nutze sie anstelle von `logging.info()`, sofern sie kompatibel ist.
-
+        ### Additional rules:
+        - **No changes to code structure or logic!**
+        - **No renaming or restructuring of variables, functions, or modules.**
+        - If logging is already used, implement changes **consistent with the existing logging structure**.
+        - If there is an existing `log` function, use it instead of `logging.info()`, if compatible.
         ---
-
-        ### Beispiel für die Umwandlung:
-
-        **Vorher:**  
+        ### Example of conversion:
+        **Before:**  
         ```python
-        print("Starte das Programm")
+        print("Starting the program")
         try:
             x = 10 / 0
         except ZeroDivisionError:
-            print("Fehler: Division durch Null!")
+            print("Error: Division by zero!")
+        ```
       kt: |
-        Du bist ein hochentwickeltes KI-Modell mit Expertise in Kotlin-Code-Optimierung. Deine Aufgabe ist es, `println()`-Statements durch `KotlinLogging` zu ersetzen.
+        You are a highly advanced AI model with expertise in Kotlin code optimization. Your task is to replace `println()` statements with `KotlinLogging`.
       
-        Wichtig:
-        ⚠️ **Keine Code-Änderungen oder funktionale Anpassungen!**
-        - Nur `println()` durch Logging ersetzen.
-        - Falls `KotlinLogging` bereits verwendet wird, nur notwendige Anpassungen vornehmen.
-        - Fehlende Logs dürfen ergänzt werden, aber nur an kritischen Stellen.
-        - Kein überflüssiges Logging oder Debug-Spam.
-        - Nur den Inhalt der geänderten Datei. Keine Markdown-Formatierung oder Erklärungen.
+        Important:
+        ⚠️ **No code changes or functional modifications!**
+        - Only replace `println()` with logging.
+        - If `KotlinLogging` is already used, make only necessary adjustments.
+        - Missing logs may be supplemented, but only in critical areas.
+        - No excessive logging or debugging spam.
+        - Only the content of the modified file. No markdown format or explanations.
       
         ---
         
-        ### Umsetzung:
+        ### Implementation:
       
         1. **Import & Logger-Definition:**
            ```kotlin
@@ -226,16 +213,16 @@ tasks:
            private val logger = KotlinLogging.logger {}
            ```
       
-        2. **Ersetze `println()` durch Logging:**
+        2. **Replace `println()` with logging:**
            ```kotlin
-           println("Update abgeschlossen")  
+           println("Update completed")  
            ```
            →  
            ```kotlin
-           logger.info { "Update abgeschlossen" }
+           logger.info { "Update completed" }
            ```
       
-        3. **Debug-Logs nur mit Lazy Evaluation:**
+        3. **Debug logs with Lazy Evaluation:**
            ```kotlin
            println("Variable x: $x")
            ```
@@ -244,12 +231,12 @@ tasks:
            logger.debug { "Variable x: $x" }
            ```
       
-        4. **Exceptions korrekt loggen:**
+        4. **Log exceptions correctly:**
            ```kotlin
            try {
                val x = 10 / 0
            } catch (e: ArithmeticException) {
-               println("Fehler: Division durch Null!")
+               println("Error: Division by zero!")
            }
            ```
            →  
@@ -257,67 +244,59 @@ tasks:
            try {
                val x = 10 / 0
            } catch (e: ArithmeticException) {
-               logger.error(e) { "Fehler: Division durch Null!" }
+               logger.error(e) { "Error: Division by zero!" }
            }
            ```
       
-        5. **Fluent Logging für komplexe Logs (falls nötig):**
+        5. **Fluent Logging for complex logs (if necessary):**
            ```kotlin
            logger.atWarn {
-               message = "Fehlerhafte Eingabe erkannt"
+               message = "Invalid input recognized"
                cause = exception
-               payload = mapOf("Eingabe" to userInput, "BenutzerID" to userId)
+               payload = mapOf("Input" to userInput, "UserID" to userId)
            }
            ```
       
         ---
-        ### Regeln:
-        - Keine Code-Struktur-Änderungen.
-        - Konsistenz mit bestehendem Logging.
-        - `logger.debug {}` nur bei echtem Bedarf.
-        - Keine überflüssigen `info`- oder `debug`-Logs.
+        ### Rules:
+        - No code structure changes.
+        - Consistency with existing logging.
+        - `logger.debug {}` only when genuinely needed.
+        - No excessive `info` or `debug` logs.
         ---
-        ### Erwartetes Verhalten:
-        - **Ersetze `println()` durch `KotlinLogging` nach Best Practices.**
-        - **Nutze Lazy Evaluation (`logger.debug {}`), wenn sinnvoll.**
-        - **Ergänze Logging nur an kritischen Stellen.**
-        - **Keine Code-Änderungen außer Logging.**
+        ### Expected Behavior:
+        - **Replace `println()` with `KotlinLogging` following best practices.**
+        - **Use Lazy Evaluation (`logger.debug {}`) when appropriate.**
+        - **Supplement logging only in critical areas.**
+        - **No code changes except logging.**
         
-        **Output the raw modified File Content**: No Markdown, no code blocks, no explenations.
-
+        **Output the raw modified File Content**: No Markdown, no code blocks, no explanations.
       java: |
-        Du bist ein hochentwickeltes KI-Modell mit Expertise in Java-Code-Optimierung. Deine Aufgabe ist es, `System.out.println()`-Statements durch Logging mit `SLF4J` zu ersetzen.
-
-        Wichtig:
-        ⚠️ **Keine Code-Änderungen oder funktionale Anpassungen!**
-        - Nur `System.out.println()` durch Logging ersetzen.
-        - Falls bereits Logging verwendet wird, nur notwendige Anpassungen vornehmen.
-        - Fehlende Logs dürfen ergänzt werden, aber nur an kritischen Stellen.
-        - Kein überflüssiges Logging oder Debug-Spam.
-        - Nur den Inhalt der geänderten Datei. Keine Markdown-Formatierung oder Erklärungen.
-
+        You are a highly advanced AI model with expertise in Java code optimization. Your task is to replace `System.out.println()` statements with logging using `SLF4J`.
+        Important:
+        ⚠️ **No code changes or functional modifications!**
+        - Only replace `System.out.println()` with logging.
+        - If logging is already used, make only necessary adjustments.
+        - Missing logs may be supplemented, but only in critical areas.
+        - No excessive logging or debugging spam.
+        - Only the content of the modified file. No markdown format or explanations.
         ---
-
-        ### Umsetzung:
-
+        ### Implementation:
         1. **Import & Logger-Definition:**
            ```java
            import org.slf4j.Logger;
            import org.slf4j.LoggerFactory;
-
            private static final Logger logger = LoggerFactory.getLogger(MyClass.class);
            ```
-
-        2. **Ersetze `System.out.println()` durch Logging:**
+        2. **Replace `System.out.println()` with logging:**
            ```java
-           System.out.println("Update abgeschlossen");
+           System.out.println("Update completed");
            ```
            →  
            ```java
-           logger.info("Update abgeschlossen");
+           logger.info("Update completed");
            ```
-
-        3. **Debug-Logs mit Platzhaltern (kein String-Konkatenation):**
+        3. **Debug logs with placeholders (no string concatenation):**
            ```java
            System.out.println("Variable x: " + x);
            ```
@@ -325,13 +304,12 @@ tasks:
            ```java
            logger.debug("Variable x: {}", x);
            ```
-
-        4. **Exceptions korrekt loggen:**
+        4. **Log exceptions correctly:**
            ```java
            try {
                int x = 10 / 0;
            } catch (ArithmeticException e) {
-               System.out.println("Fehler: Division durch Null!");
+               System.out.println("Error: Division by zero!");
            }
            ```
            →  
@@ -339,23 +317,23 @@ tasks:
            try {
                int x = 10 / 0;
            } catch (ArithmeticException e) {
-               logger.error("Fehler: Division durch Null!", e);
+               logger.error("Error: Division by zero!", e);
            }
            ```
         ---
-        ### Regeln:
-        - Keine Code-Struktur-Änderungen.
-        - Konsistenz mit bestehendem Logging.
-        - `logger.debug()` nur bei echtem Bedarf.
-        - Keine überflüssigen `info`- oder `debug`-Logs.
+        ### Rules:
+        - No code structure changes.
+        - Consistency with existing logging.
+        - `logger.debug()` only when genuinely needed.
+        - No excessive `info` or `debug` logs.
         ---
-        ### Erwartetes Verhalten:
-        - **Ersetze `System.out.println()` durch SLF4J-Logging.**
-        - **Nutze Platzhalter (`logger.debug("{}", var)`) anstatt String-Konkatenation.**
-        - **Ergänze Logging nur an kritischen Stellen.**
-        - **Keine Code-Änderungen außer Logging.**
+        ### Expected Behavior:
+        - **Replace `System.out.println()` with SLF4J logging.**
+        - **Use placeholders (`logger.debug("{}", var)`) instead of string concatenation.**
+        - **Supplement logging only in critical areas.**
+        - **No code changes except logging.**
         
-        **Output the raw modified File Content**: No Markdown, no code blocks, no explenations.
+        **Output the raw modified File Content**: No Markdown, no code blocks, no explanations.
   unit-tests:
     description: Generate complete and well-structured unit tests in Kotlin using JUnit and Kotest Assertions.
     file_name_pattern: '^(?!.*[Dd][Tt][Oo])(?!.*Properties)(?!.*[Tt]est)(?!.*\.spec).*$'
