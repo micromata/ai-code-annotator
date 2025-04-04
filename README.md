@@ -1,36 +1,38 @@
 # AI-Code-Annotator
 
-Das AI-Code-Annotator-Projekt nutzt Azure OpenAI, um automatisch verschiedene Aufgaben auf lokalen Dateien auszuführen. Diese Aufgaben können weit über das Hinzufügen von Kommentaren hinausgehen und sind flexibel konfigurierbar. Das System kann beispielsweise dazu verwendet werden, Code zu dokumentieren, Log-Statements hinzuzufügen, Inhalte zusammenzufassen oder Unit-Tests zu erstellen.
+Das AI-Code-Annotator-Projekt nutzt Azure OpenAI, um automatisiert verschiedene Aufgaben auf lokalen Dateien auszuführen. Dazu zählen unter anderem das Kommentieren von Code, das Hinzufügen von Log-Statements, das Erstellen von Unit-Tests oder das Zusammenfassen von Inhalten. Die Aufgaben sind flexibel konfigurierbar und können an spezifische Anforderungen angepasst werden.
+
+---
 
 ## Funktionsweise
-### Aufgabenverwaltung:
-Das System lädt und verwaltet Aufgaben, die in einer YAML-Datei definiert sind. Jede Aufgabe kann spezifische Systemprompts und Dateioperationen umfassen.
 
-### Datei Scannen und Einlesen:
-Das Tool durchforstet das angegebene Verzeichnis (BASE_DIR) nach Dateien, die den in TASKS definierten Aufgaben entsprechen und die festgelegten Dateierweiterungen besitzen.
-Dateien werden identifiziert und auf Basis von Mustern oder Größenbeschränkungen (<= 3MB) zur Verarbeitung ausgewählt.
+### Aufgabenverwaltung
+Das System lädt Aufgaben aus einer YAML-Datei, die Systemprompts und Dateioperationen definiert. Jede Aufgabe kann auf bestimmte Dateitypen oder Muster beschränkt werden.
 
-### Aufgabenverarbeitung:
-Jede ausgewählte Datei wird an das Azure OpenAI-Modell gesendet, welches die konfigurierten Aufgaben durchführt. Dazu gehören:
-- Kommentierung von Code
-- Hinzufügen von Log-Statements
-- Inhaltliche Zusammenfassung
+### Datei-Scanning
+Das Tool durchsucht das angegebene Verzeichnis (`BASE_DIR`) nach Dateien, die den in `TASKS` definierten Kriterien entsprechen. Dateien werden anhand von Mustern, Dateierweiterungen und Größenbeschränkungen (<= 3MB) gefiltert.
+
+### Batch-Verarbeitung
+Das Tool verarbeitet Dateien in konfigurierbaren Batches. Dies reduziert die Belastung von Systemressourcen und ermöglicht eine gleichmäßige Verarbeitung. Die Batch-Größe kann angepasst werden, um die Verarbeitungsgeschwindigkeit zu steuern.
+
+### Aufgabenverarbeitung
+Jede Datei wird an das Azure OpenAI-Modell gesendet, das die definierten Aufgaben ausführt. Dazu gehören:
+- Hinzufügen von Kommentaren
+- Ergänzen von Log-Statements
 - Erstellen von Unit-Tests
-- beliebige weitere Aufgaben (z.B. Code-Refactoring)
+- Weitere Aufgaben wie Refactoring oder Datenanreicherung
 
-**Die Aufgabe wird nach Beendigung im Index als bearbeitet protokolliert.**
+Nach Abschluss wird die Datei im Index als bearbeitet markiert.
 
-### Index-Tracking:
-Eine Indexdatei (INDEX_FILE) steht bereit, um abgeschlossene Aufgaben zu protokollieren, sodass Dateien bei zukünftigen Durchläufen nicht erneut bearbeitet werden.
+### Index-Tracking
+Eine Indexdatei (`INDEX_FILE`) speichert den Bearbeitungsstatus von Dateien. Dadurch werden bereits verarbeitete Dateien bei späteren Durchläufen übersprungen.
 
 ---
 
 ## Schnelleinstieg
 
-Wenn du keinen Änderungen an den Prompts und Dateifiltern vornehmen möchtest, kannst du das Skript einfach ausführen, indem du die folgenden Schritte befolgst:
-
-1. **Docker Compose verwenden**
-   Kopiere die folgende Compose-Datei in deine Umgebung und passe sie bei Bedarf an:
+1. **Docker Compose verwenden**  
+   Kopiere die folgende Compose-Datei in dein Projekt und passe sie bei Bedarf an:
 
    ```yaml
    version: "3.9"
@@ -54,14 +56,13 @@ Wenn du keinen Änderungen an den Prompts und Dateifiltern vornehmen möchtest, 
          restart: "no"
    ```
 
-   > **Hinweis**: Passe den Projektpfad (`/Users/XXX`) an dein lokales Dateisystem an.
-   
+   > **Hinweis**: Passe den Pfad `/Users/xxx` an dein lokales Dateisystem an.
+
 2. **Container starten**  
-   Wechsle in das Verzeichnis, in dem deine `docker-compose.yml` liegt, und führe folgende Befehle aus:
    ```bash
    docker compose up
    ```
-   Der Container startet, liest die Dateien im angegebenen Projektordner ein und kommentiert sie.
+   Der Container verarbeitet die Dateien im angegebenen Verzeichnis.
 
 ---
 
@@ -73,7 +74,7 @@ Wenn du das Skript erneut auf dieselben Dateien anwenden willst (z.B. nachdem du
 
 ## Lokale Entwicklung
 
-### Install dependencies
+### Abhängigkeiten installieren
 
 ```bash
 python3 -m venv venv
@@ -81,47 +82,55 @@ source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Kopie der .env anlegen
+### `.env`-Datei erstellen
 
 ```bash
 cp .env.sample .env
 ```
-Anschließend die Werte in der `.env` anpassen (insbesondere `BASE_DIR` und `AZURE_OPENAI_API_KEY`).
+Passe die Werte in der `.env`-Datei an (z. B. `BASE_DIR` und `AZURE_OPENAI_API_KEY`).
 
-### Run Script
+### Skript ausführen
 
 ```bash
 python3 main.py
 ```
 
-### Kerndateien und Module
-- main.py: Hauptskript zur Initialisierung der asynchronen Aufgabenverarbeitung.
-- file_utils.py: Hilfsfunktionen für das sichere Einlesen und Filtern von Dateien.
-- open_ai_client.py: API-Schnittstelle zur Interaktion mit Azure OpenAI.
-- process_files.py: Kernlogik für die Verarbeitungspipeline.
-- processing_index.py: Verwaltung und Aktualisierung des Bearbeitungsindex der Dateien.
-- task_and_prompt_manager.py: Laden und Organisieren von Aufgaben und Systemprompts.
+---
 
-_AI generierte README_
+## Features
 
-# Double Checker for AI-Documentation
-Dieses Skript analysiert Änderungen in einem Git-Repository und entscheidet, ob nur Kommentare oder Formatierungen geändert wurden oder ob tatsächlich Code-Modifikationen vorliegen. Falls Code-Änderungen festgestellt werden, werden diese automatisch zurückgesetzt.
+- **Batch-Verarbeitung**: Dateien werden in Batches verarbeitet, um die Systemressourcen effizient zu nutzen.
+- **Flexibles Aufgabenmanagement**: Aufgaben wie Dokumentation, Logging oder Unit-Tests können in einer YAML-Datei definiert werden.
+- **Index-Tracking**: Verhindert doppelte Bearbeitung bereits verarbeiteter Dateien.
+- **Azure OpenAI Integration**: Nutzt KI-Modelle für die Verarbeitung.
+- **Asynchrone Verarbeitung**: Unterstützt parallele Verarbeitung für bessere Performance.
 
-Hilfreich, nachdem man in einem großen Repo alle Datein vom LLM mit Kommentaren versehen hat, da hierbei durch das LLM versehentliche Code-Änderungen gemacht werden können.
+---
+
+## Kerndateien und Module
+
+- **`main.py`**: Startet die Verarbeitungspipeline.
+- **`file_utils.py`**: Funktionen zum Einlesen und Filtern von Dateien.
+- **`open_ai_client.py`**: Schnittstelle zur Azure OpenAI API.
+- **`process_files.py`**: Logik für die Verarbeitung von Dateien.
+- **`processing_index.py`**: Verwaltung des Bearbeitungsstatus.
+- **`task_and_prompt_manager.py`**: Laden und Verwalten von Aufgaben und Prompts.
+
+---
+
+## Double Checker for AI-Documentation
+
+Dieses Skript prüft Änderungen in einem Git-Repository und erkennt, ob nur Kommentare oder Formatierungen geändert wurden. Falls Code-Änderungen festgestellt werden, können diese zurückgesetzt werden.
 
 ```bash
 python3 double-check-documentation-changes.py
 ```
 
-*Hinweis:* Das BASE_DIR muss in der .env-Datei angegeben werden und für dieses Skript immer auf das GIT Root Verzeichnis des jeweiligen Projekts verweisen!
+### Funktionsweise
+1. Analysiert geänderte Dateien im Git-Repository.
+2. Prüft, ob Änderungen nur Kommentare oder Formatierungen betreffen.
+3. Erkennt Code-Änderungen und setzt diese bei Bedarf zurück.
 
-## Funktionsweise
-1. Ermittelt geänderte Dateien im Git-Repository.
-2. Analysiert den Git-Diff der Dateien:
-3. Falls nur Kommentare oder Formatierungen geändert wurden, bleiben die Änderungen bestehen.
-4. Falls Code geändert wurde, wird dies erkannt und die Datei kann zurückgesetzt werden.
-5. Falls notwendig, nutzt das Skript ein Azure OpenAI-Modell zur weiteren Analyse.
-
-## Konfigurationsoptionen
-- **DRY_RUN**: Falls aktiviert, werden keine Änderungen an Dateien vorgenommen, sondern nur protokolliert. (Empfohlen für den ersten Durchlauf, danach False setzen)
-- **USE_LLM_ANALYSIS**: Falls aktiviert, wird Azure OpenAI genutzt, um unklare Änderungen zu analysieren. (Empfohlen für deutlich bessere Genauigkeit!)
+### Konfigurationsoptionen
+- **`DRY_RUN`**: Keine Änderungen vornehmen, nur protokollieren.
+- **`USE_LLM_ANALYSIS`**: Nutzt Azure OpenAI für detaillierte Analysen.
