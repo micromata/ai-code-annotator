@@ -1,0 +1,7 @@
+openai
+tiktoken
+aiofiles
+nest_asyncio
+python-dotenv
+chardet
+pyyaml
