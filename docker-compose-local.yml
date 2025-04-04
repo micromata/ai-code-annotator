@@ -7,15 +7,15 @@ services:
     container_name: ai-code-annotator
     
     volumes:
-      # Pfad zum Projekt, das dokumentiert werden soll
+      # Path to the project to be documented
       - /Users/xxx:/app/project
-      # Spezifisches Mount für die tasks_and_prompts.yaml (nur anzugeben, wenn du spezifische Tasks, Dateifilter oder eigene Aufgaben verwenden willst)
+      # Specific mount for the tasks_and_prompts.yaml (only specify if you want to use specific tasks, file filters, or custom tasks)
       # - /Users/XXXX/tasks_and_prompts.yaml:/app/tasks_and_prompts.yaml
     environment:
       - BASE_DIR=/app/project
-      # Wähle einen für dich passenden Task aus (siehe tasks_and_prompts.yaml)
+      # Choose a task suitable for you (see tasks_and_prompts.yaml)
       - TASKS=documentation
-      # Azure OpenAI API Key (siehe Bitwarden AI Collection)
+      # Azure OpenAI API Key
       - AZURE_OPENAI_API_KEY=xxx
 
     restart: "no"

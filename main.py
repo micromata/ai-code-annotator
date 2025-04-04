@@ -1,14 +1,13 @@
-# Dieses Skript dient der Integration von Azure OpenAI in eine asynchrone
-# Python-Umgebung. Es ermöglicht die Verarbeitung und Dokumentation von
-# lokalen (Sourcode) Dateien durch das automatische Hinzufügen von Kommentaren.
+# This script integrates Azure OpenAI into an asynchronous Python environment.
+# It enables the processing and documentation of local (source code) files by automatically adding comments.
 #
-# Funktionen:
-# -----------
-# - Liest Dateien mit bestimmten Erweiterungen aus einem Verzeichnis.
-# - Überprüft die Token-Anzahl, um OpenAI API-Beschränkungen einzuhalten.
-# - Sendet die Inhalte an Azure OpenAI zusammen mit einem passenden Systemprompt (z.B. Dokumentationserstellung).
-# - Speichert die Rückgabe von Azure OpenAI in der vorherigen Datei oder einer neuen Datei.
-# - Nutzt asynchrone Verarbeitung zur Effizienzsteigerung.
+# Functions:
+# ----------
+# - Reads files with specific extensions from a directory.
+# - Checks the token count to comply with OpenAI API limitations.
+# - Sends the content to Azure OpenAI along with an appropriate system prompt (e.g., for documentation generation).
+# - Saves the response from Azure OpenAI into the original file or a new file.
+# - Uses asynchronous processing to improve efficiency.
 
 import asyncio
 import logging
@@ -20,5 +19,5 @@ load_dotenv()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-    logging.info("Starte AI-Code-Annotator.")
+    logging.info("Starting AI-Code-Annotator.")
     asyncio.run(run_processing_pipeline())
